@@ -64,7 +64,6 @@ const gameModule = (() => {
     const player1 = playerFactory('X', 'player1');
     const player2 = playerFactory('O', 'player2');
     let mode = undefined;
-    let isCurrentPlayer1 = true;
     let currentPlayer;
 
     const singlePlayerGame = () => {
@@ -73,13 +72,12 @@ const gameModule = (() => {
 
     const multiPlayerGame = () => {
       currentPlayer = player1;
-      
+
     }
 
     const setCurrentPlayer = () => {
-      isCurrentPlayer1 = !isCurrentPlayer1;
-      if(isCurrentPlayer1) return currentPlayer = player1;
-      currentPlayer = player2;
+      if(currentPlayer.getName() == 'player1') return currentPlayer = player2;
+      currentPlayer = player1;
       
     }
 
