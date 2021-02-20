@@ -1,5 +1,6 @@
 const gameModule = (() => {
-
+  
+  const _htmlSquares = document.querySelectorAll('td');
 
   /**
    * This module stores game board information
@@ -8,7 +9,7 @@ const gameModule = (() => {
   const gameBoard = (() => {
     let _board = new Array(9);
     const getSquare = (indexNum) => _board[indexNum];
-    const _htmlSquares = document.querySelectorAll('td');
+    
 
     /**
      * Sets the textContent of a square to the value of the player's symbol (X or O)
@@ -19,6 +20,7 @@ const gameModule = (() => {
       const htmlSquare = _htmlSquares[indexNum];
       htmlSquare.textContent = player.getSymbol();
       _board[indexNum] = player.getSymbol();
+      console.log(getSquare(indexNum));
 
     }
 
@@ -51,6 +53,29 @@ const gameModule = (() => {
     }
   }
 
+  const clickEvents = (() => {
+    const _singlePlayerButton = document.querySelector('#singlePlayer');
+    const _multiPlayerButton = document.querySelector('#multiplayer');
+
+    _multiPlayerButton.addEventListener('click', ()=> gameLogic.multiPlayer());
+    _singlePlayerButton.addEventListener('click', () => gameLogic.singlePlayer());
+    
+    _htmlSquares.forEach(element =>{
+      element.addEventListener('click', ()=>{
+        gameLogic.clickSquare();
+      })
+    })
+
+    const testButtons = () => {
+      console.dir([_onePlayerButton,_multiPlayerButton]);
+    }
+
+    return{
+      testButtons,
+    }
+
+  })(); 
+
   /**
    * testing module to allow browser access to private modules.
    */
@@ -60,7 +85,7 @@ const gameModule = (() => {
 
     const getIndexes = () => {
       for (let i = 0; i < 9; i++) {
-        console.log(`board index ${i} = ${gameBoard.getSquare[i]}`);
+        console.log(`board index ${i} = ${gameBoard.getSquare(i)}`);
       }
     }
 
@@ -88,6 +113,7 @@ const gameModule = (() => {
 
   return {
     test,
+    clickEvents
   }
 
 })();
