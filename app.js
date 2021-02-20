@@ -1,4 +1,4 @@
-(function () {
+const gameModule = (() => {
 
 
   /**
@@ -23,11 +23,11 @@
     }
 
     const clearBoard = () => {
-      _board.forEach((element, index) =>{ 
+      _board.forEach((element, index) => {
         _board[index] = undefined
         _htmlSquares[index].textContent = '';
       });
-    
+
     }
 
     return {
@@ -48,9 +48,46 @@
 
     return {
       getSymbol,
-
-    }  
+    }
   }
 
+  /**
+   * testing module to allow browser access to private modules.
+   */
+  const test = (() => {
+    const player1 = playerFactory('X');
+    const player2 = playerFactory('O');
+
+    const getIndexes = () => {
+      for (let i = 0; i < 9; i++) {
+        console.log(`board index ${i} = ${gameBoard.getSquare[i]}`);
+      }
+    }
+
+    const getHtml = () => {
+      return document.querySelectorAll('td');
+    }
+
+    const setSquare = (indexNum, symbol) => {
+     if(symbol === 'X') return gameBoard.setSquare(indexNum, player1);
+     gameBoard.setSquare(indexNum, player2);
+    }
+
+    const clearBoard = () => {
+      gameBoard.clearBoard();
+    }
+
+    return{
+      getIndexes,
+      getHtml,
+      setSquare,
+      clearBoard
+    }
+
+  })();
+
+  return {
+    test,
+  }
 
 })();
