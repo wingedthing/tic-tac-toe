@@ -162,37 +162,39 @@ const gameModule = (() => {
      */
     const checkWinner = (index) => {
       let symbolToCheck = (_currentRound % 2) ? 'O' : 'X';
+      let condArr;
       _currentRound++;
 
       switch (index) {
         case 0:
-          checkCondition(['A','B','C'], symbolToCheck);
+          condArr = ['A','B','C'];
           break;
         case 1:
-          checkCondition(['A','D'], symbolToCheck);
+          condArr = ['A','D'];
           break;
         case 2:
-          checkCondition(['A','E','F'], symbolToCheck);
+          condArr = ['A','E','F'];
           break;
         case 3:
-          checkCondition(['B','G'], symbolToCheck);
+          condArr = ['B','G'];
           break;
         case 4:
-          checkCondition(['C', 'D', 'F', 'G'], symbolToCheck);
+          condArr = ['C', 'D', 'F', 'G'];
           break;
         case 5:
-          checkCondition(['E','G'], symbolToCheck);
+          condArr = ['E','G'];
           break;
         case 6:
-          checkCondition(['B','F','H'], symbolToCheck);
+          condArr = ['B','F','H'];
           break;
         case 7:
-          checkCondition(['D','H'], symbolToCheck);
+          condArr = ['D','H'];
           break;
         case 8:
-          checkCondition(['C', 'E', 'H'], symbolToCheck);
-          break;
+          condArr = ['C', 'E', 'H'];
       }
+
+      checkCondition(condArr, symbolToCheck);
 
     }
 
