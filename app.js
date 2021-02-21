@@ -109,15 +109,19 @@ const gameModule = (() => {
   const winLogic = (() => {
     let _currentRound = 1;
     const resetRound = () => _currentRound = 1;
+
+    /**
+     * ['condValue' : (empty, X, O, or blocked), # of times accessed]
+     */
     const winConditions = {
-      condA: ['empty'], // (0, 1, 2) The indexes of the win conditions; i.e Top row
-      condB: ['empty'], // (0, 3, 6) Left column
-      condC: ['empty'], // (0, 4, 8) Top left to bottom right diagonal
-      condD: ['empty'], // (1, 4, 7) Middle column
-      condE: ['empty'], // (2, 5, 8) Right column
-      condF: ['empty'], // (2, 4, 6) Top right to bottom left diagonal
-      condG: ['empty'], // (3, 4, 5) Middle Row
-      condH: ['empty']  // (6, 7, 8) Bottom Row
+      condA: ['empty', 0], // (0, 1, 2) Top row
+      condB: ['empty', 0], // (0, 3, 6) Left column
+      condC: ['empty', 0], // (0, 4, 8) Top left to bottom right diagonal
+      condD: ['empty', 0], // (1, 4, 7) Middle column
+      condE: ['empty', 0], // (2, 5, 8) Right column
+      condF: ['empty', 0], // (2, 4, 6) Top right to bottom left diagonal
+      condG: ['empty', 0], // (3, 4, 5) Middle Row
+      condH: ['empty', 0]  // (6, 7, 8) Bottom Row
     };
 
     const hasWon = () => {
@@ -132,13 +136,12 @@ const gameModule = (() => {
      */
     const checkCondition = (condLetterArr, symbol) => {
       
-      
       for (let i = 0; i < condLetterArr.length; i++) {
         let key = `cond${condLetterArr[i]}`;
         let condValue = winConditions[key][0];
         if (condValue === 'empty') {
           winConditions[key][0] = symbol;
-          winConditions[key][1] = 1;
+          winConditions[key][1]++;
           continue;
         }
 
