@@ -29,6 +29,8 @@ body {
 header {
   display: flex;
   justify-content: center;
+  max-height: 20vh;
+  align-items: center;
 }
 
 h1 {
@@ -64,6 +66,11 @@ main {
 
 .single-wrapper {
   margin-bottom: 1vh;
+}
+
+.img-wrapper {
+  width: 30%;
+  height: 100%;
 }
 
 .board-wrapper {
