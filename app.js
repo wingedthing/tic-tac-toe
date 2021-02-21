@@ -3,7 +3,7 @@ const gameModule = (() => {
   const _htmlSquares = document.querySelectorAll('td');
 
   /**
-   * This module stores game board information
+   * This module stores and manipulates game board information
    */
 
   const gameBoard = (() => {
@@ -46,6 +46,7 @@ const gameModule = (() => {
   /**
    * 
    * @param {*} symbol the player's symbol (X or O);
+   * @param {*} name The player's name, used for some logic checks.
    */
   const playerFactory = (symbol, name) => {
     let _symbol = symbol;
@@ -60,6 +61,10 @@ const gameModule = (() => {
     }
   }
 
+  /**
+   * Handles selecting of game mode, creation/selection of players, and square clicking logic.
+   * Calls the winLogic, playerFactory, gameBoard and clickEvents modules.   
+   */
   const gameLogic = (() => {
     const player1 = playerFactory('X', 'player1');
     let player2;
