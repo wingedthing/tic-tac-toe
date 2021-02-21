@@ -62,23 +62,28 @@ const gameModule = (() => {
 
   const gameLogic = (() => {
     const player1 = playerFactory('X', 'player1');
-    const player2 = playerFactory('O', 'player2');
-    let mode = undefined;
+    let player2;
     let currentPlayer;
 
     const singlePlayerGame = () => {
-
+      gameBoard.clearBoard();
     }
 
     const multiPlayerGame = () => {
+      gameBoard.clearBoard();
       currentPlayer = player1;
+      player2 = playerFactory('O', 'player2');
 
     }
 
-    const setCurrentPlayer = () => {
+    const switchCurrentPlayer = () => {
       if (currentPlayer.getName() == 'player1') return currentPlayer = player2;
       currentPlayer = player1;
+    }
 
+    const resetPlayers = () => {
+      currentPlayer = undefined;
+      player2 = undefined;
     }
 
     /**
@@ -90,7 +95,7 @@ const gameModule = (() => {
       if (!currentPlayer) return console.log("currentPlayer is falsly!");
       if (square.textContent == '') {
         gameBoard.setSquare(index, currentPlayer);
-        setCurrentPlayer();
+        switchCurrentPlayer();
         winLogic.checkWinner(index);
       }
     }
@@ -98,7 +103,8 @@ const gameModule = (() => {
     return {
       singlePlayerGame,
       multiPlayerGame,
-      clickSquare
+      clickSquare,
+      resetPlayers
     }
 
   })();
@@ -111,6 +117,7 @@ const gameModule = (() => {
     const resetRound = () => _currentRound = 1;
 
     /**
+     * The "database" of key value pairs that holds game state information
      * ['condValue' : (empty, X, O, or blocked), # of times accessed]
      */
     const winConditions = {
@@ -124,13 +131,26 @@ const gameModule = (() => {
       condH: ['empty', 0]  // (6, 7, 8) Bottom Row
     };
 
-    const hasWon = () => {
-      console.log('winner!')
-      resetRound();
-      gameBoard.clearBoard();
+    const resetWinCond = () => {
+      for(let key in winConditions){
+        winConditions[key] = ['empty', 0];
+      }
     }
+
     /**
-     * Checks and update key values in the winConditions object 
+     * Executed when a plyer has won, or there is a draw, handles calling  data reset and display functions.
+     * @param {*} boolean true for a win, false for a draw
+     * @param {*} symbol symbol of the current player who caused the hasWon function to be executed.  
+     */
+    const hasWon = (boolean, symbol) => {
+      (boolean) ? console.log(`${symbol} has WON!`) : console.log('DRAW');
+      resetRound();
+      gameLogic.resetPlayers();
+      resetWinCond();
+    }
+
+    /**
+     * Checks and updates key values in the winConditions object 
      * @param {*} condLetterArr An array of possible win cond letters that are used as keys in the winConditions object 
      * @param {*} symbol The current symbol that was played this round, to check and store in the winConditions object
      */
@@ -152,19 +172,19 @@ const gameModule = (() => {
 
         winConditions[key][1]++;
         
-        if (winConditions[key][1] == 3) {
-          return hasWon();
+        if (winConditions[key][1] >= 3) {
+          return hasWon(true, symbol);
         }
       }
 
     }
 
     /**
-     * Depending on the square index passed, will check if a 3 in a row has been made involving that square.
+     * Depending on the square index passed in, will check if a 3 in a row has been made involving that square.
      * @param {*} index the index of the square to check. 
      */
     const checkWinner = (index) => {
-      let symbolToCheck = (_currentRound % 2) ? 'O' : 'X';
+      let symbolToCheck = (_currentRound % 2 === 0) ? 'O' : 'X';
       let condArr;
       _currentRound++;
 
@@ -198,6 +218,7 @@ const gameModule = (() => {
       }
 
       checkCondition(condArr, symbolToCheck);
+      if (_currentRound > 9) hasWon(false); 
 
     }
 
