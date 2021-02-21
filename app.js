@@ -7,7 +7,7 @@ const gameModule = (() => {
    */
 
   const gameBoard = (() => {
-    let _board = new Array(9);
+    const _board = new Array(9);
     let _isGameOver = false;
     const getSquare = (indexNum) => _board[indexNum];
 
@@ -76,9 +76,9 @@ const gameModule = (() => {
     }
 
     const setCurrentPlayer = () => {
-      if(currentPlayer.getName() == 'player1') return currentPlayer = player2;
+      if (currentPlayer.getName() == 'player1') return currentPlayer = player2;
       currentPlayer = player1;
-      
+
     }
 
     /**
@@ -91,6 +91,7 @@ const gameModule = (() => {
       if (square.textContent == '') {
         gameBoard.setSquare(index, currentPlayer);
         setCurrentPlayer();
+        winLogic.checkWinner(index);
       }
     }
 
@@ -98,6 +99,108 @@ const gameModule = (() => {
       singlePlayerGame,
       multiPlayerGame,
       clickSquare
+    }
+
+  })();
+
+  /**
+   * Determines if a player has won by checking the 8 possible win conditions on each round
+   */
+  const winLogic = (() => {
+    let _currentRound = 1;
+    const resetRound = () => _currentRound = 1;
+    const winConditions = {
+      condA: ['empty'], // (0, 1, 2) The indexes of the win conditions; i.e Top row
+      condB: ['empty'], // (0, 3, 6) Left column
+      condC: ['empty'], // (0, 4, 8) Top left to bottom right diagonal
+      condD: ['empty'], // (1, 4, 7) Middle column
+      condE: ['empty'], // (2, 5, 8) Right column
+      condF: ['empty'], // (2, 4, 6) Top right to bottom left diagonal
+      condG: ['empty'], // (3, 4, 5) Middle Row
+      condH: ['empty']  // (6, 7, 8) Bottom Row
+    };
+
+    const hasWon = () => {
+      console.log('winner!')
+      resetRound();
+      gameBoard.clearBoard();
+    }
+    /**
+     * Checks and update key values in the winConditions object 
+     * @param {*} condLetterArr An array of possible win cond letters that are used as keys in the winConditions object 
+     * @param {*} symbol The current symbol that was played this round, to check and store in the winConditions object
+     */
+    const checkCondition = (condLetterArr, symbol) => {
+      
+      
+      for (let i = 0; i < condLetterArr.length; i++) {
+        let key = `cond${condLetterArr[i]}`;
+        let condValue = winConditions[key][0];
+        if (condValue === 'empty') {
+          winConditions[key][0] = symbol;
+          winConditions[key][1] = 1;
+          continue;
+        }
+
+        if (condValue != symbol) {
+          winConditions[key][0] = 'blocked';
+          continue;
+        }
+
+        winConditions[key][1]++;
+        
+        if (winConditions[key][1] == 3) {
+          return hasWon();
+        }
+      }
+
+    }
+
+    /**
+     * Depending on the square index passed, will check if a 3 in a row has been made involving that square.
+     * @param {*} index the index of the square to check. 
+     */
+    const checkWinner = (index) => {
+      let symbolToCheck = (_currentRound % 2) ? 'O' : 'X';
+      _currentRound++;
+
+      switch (index) {
+        case 0:
+          checkCondition(['A','B','C'], symbolToCheck);
+          break;
+        case 1:
+          checkCondition(['A','D'], symbolToCheck);
+          break;
+        case 2:
+          checkCondition(['A','E','F'], symbolToCheck);
+          break;
+        case 3:
+          checkCondition(['B','G'], symbolToCheck);
+          break;
+        case 4:
+          checkCondition(['C', 'D', 'F', 'G'], symbolToCheck);
+          break;
+        case 5:
+          checkCondition(['E','G'], symbolToCheck);
+          break;
+        case 6:
+          checkCondition(['B','F','H'], symbolToCheck);
+          break;
+        case 7:
+          checkCondition(['D','H'], symbolToCheck);
+          break;
+        case 8:
+          checkCondition(['C', 'E', 'H'], symbolToCheck);
+          break;
+      }
+
+    }
+
+    return {
+      resetRound,
+      checkWinner,
+      checkCondition,
+      winConditions
     }
 
   })();
@@ -124,10 +227,12 @@ const gameModule = (() => {
   const test = (() => {
     const player1 = playerFactory('X');
     const player2 = playerFactory('O');
+    const indexArr = [];
 
     const getIndexes = () => {
       for (let i = 0; i < 9; i++) {
         console.log(`board index ${i} = ${gameBoard.getSquare(i)}`);
+        indexArr.push(gameBoard.getSquare(i));
       }
     }
 
@@ -148,14 +253,16 @@ const gameModule = (() => {
       getIndexes,
       getHtml,
       setSquare,
-      clearBoard
+      clearBoard,
+      indexArr
     }
 
   })();
 
   return {
     test,
-    clickEvents
+    clickEvents,
+    winLogic
   }
 
 })();
