@@ -234,7 +234,17 @@ const gameModule = (() => {
       winConditions
     }
 
+
   })();
+
+  /**
+   * Returns a new DocumentFragment and adds a DOM node to it 
+   * @param {*} tagString The string of html input to be encoded into a dom node and added to the DocumentFragment 
+   */
+  const makeDocFrag = (tagString) => {
+    let range = document.createRange();
+    return range.createContextualFragment(tagString);
+  }
 
   const clickEvents = (() => {
     const _singlePlayerButton = document.querySelector('#singlePlayer');
