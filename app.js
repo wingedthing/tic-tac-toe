@@ -1,6 +1,7 @@
 const gameModule = (() => {
 
   const _htmlSquares = document.querySelectorAll('td');
+  const _line = document.querySelector('line');
 
   /**
    * This module stores and manipulates game board information
@@ -27,6 +28,7 @@ const gameModule = (() => {
       _board.forEach((element, index) => {
         _board[index] = undefined
         _htmlSquares[index].textContent = '';
+        _line.style.visibility = "hidden";
       });
 
     }
@@ -143,12 +145,12 @@ const gameModule = (() => {
     }
 
     /**
-     * Executed when a plyer has won, or there is a draw, handles calling  data reset and display functions.
-     * @param {*} boolean true for a win, false for a draw
+     * Executed when a plyer has won, or there is a setCoords, handles calling  data reset and display functions.
+     * @param {*} boolean true for a win, false for a setCoords
      * @param {*} symbol symbol of the current player who caused the hasWon function to be executed.  
      */
     const hasWon = (boolean, symbol) => {
-      (boolean) ? console.log(`${symbol} has WON!`) : console.log('DRAW');
+      (boolean) ? console.log(`${symbol} has WON!`) : console.log('setCoords');
       resetRound();
       gameLogic.resetPlayers();
       resetWinCond();
@@ -178,6 +180,7 @@ const gameModule = (() => {
         winConditions[key][1]++;
         
         if (winConditions[key][1] >= 3) {
+          drawLine(key);
           return hasWon(true, symbol);
         }
       }
@@ -246,6 +249,27 @@ const gameModule = (() => {
     return range.createContextualFragment(tagString);
   }
 
+  const drawLine = (winCond) => {
+    _line.style.visibility = "visible";
+    if(winCond == "condA") setCoords(0,16.7,100,16.7)
+    if(winCond == "condB") setCoords(16.7,0,16.7,100)
+    if(winCond == "condC") setCoords(0,0,100,100)
+    if(winCond == "condD") setCoords(50,0,50,100)
+    if(winCond == "condE") setCoords(83.3,0,83.3,100)
+    if(winCond == "condF") setCoords(100,0,0,100)
+    if(winCond == "condG") setCoords(0,50,100,50)
+    if(winCond == "condH") setCoords(0,83.3,100,83.3)
+
+    function setCoords(x1,y1,x2,y2) {
+      _line.attributes.x1.nodeValue = `${x1}%`;
+      _line.attributes.y1.nodeValue = `${y1}%`;
+      _line.attributes.x2.nodeValue = `${x2}%`;
+      _line.attributes.y2.nodeValue = `${y2}%`;
+    }
+  }
+
+
+
   const clickEvents = (() => {
     const _singlePlayerButton = document.querySelector('#singlePlayer');
     const _multiPlayerButton = document.querySelector('#multiplayer');
@@ -303,7 +327,8 @@ const gameModule = (() => {
   return {
     test,
     clickEvents,
-    winLogic
+    winLogic,
+    drawLine
   }
 
 })();
