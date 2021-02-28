@@ -8,10 +8,15 @@ const gameModule = (() => {
    */
 
   const gameBoard = (() => {
-    const _board = new Array(9);
+    const _board = new Array(9).fill(undefined);
     let _isGameOver = false;
+    
     const getSquare = (indexNum) => _board[indexNum];
-
+    
+    const getBoard = (() => {
+      const boardCopy = _board.map(el => el);
+      return boardCopy
+    });
 
     /**
      * Sets the textContent of a square to the value of the player's symbol (X or O)
@@ -41,7 +46,8 @@ const gameModule = (() => {
       getSquare,
       setSquare,
       clearBoard,
-      getIsGameOver
+      getIsGameOver,
+      getBoard
     }
   })();
 
@@ -61,6 +67,20 @@ const gameModule = (() => {
       getSymbol,
       getName,
     }
+  }
+
+  /**
+   * Calls gameBoard.getBoard to copy the current _board and then checks for free squares and returns the index of one at random.
+   */
+  const pickRandomSquare = () => {
+    const currentBoard = gameBoard.getBoard();
+    const openSquaresIndexes = [];
+    currentBoard.forEach((el, i) => {
+      if (el === undefined) openSquaresIndexes.push(i);
+    });
+    const max = openSquaresIndexes.length - 1;
+    const randomIndex = Math.floor(Math.random() * max);
+    return openSquaresIndexes[randomIndex];
   }
 
   /**
@@ -150,7 +170,7 @@ const gameModule = (() => {
      * @param {*} symbol symbol of the current player who caused the hasWon function to be executed.  
      */
     const hasWon = (boolean, symbol) => {
-      (boolean) ? console.log(`${symbol} has WON!`) : console.log('setCoords');
+      (boolean) ? console.log(`${symbol} has WON!`) : console.log('DRAW');
       resetRound();
       gameLogic.resetPlayers();
       resetWinCond();
