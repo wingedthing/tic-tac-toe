@@ -91,16 +91,24 @@ const gameModule = (() => {
     const player1 = playerFactory('X', 'player1');
     let player2;
     let currentPlayer;
+    let _gameMode;
+
+    const getMode = () => _gameMode
+    const getPlayer = () => currentPlayer;
 
     const singlePlayerGame = () => {
       gameBoard.clearBoard();
+      currentPlayer = player1;
+      player2 = playerFactory('O', 'AI');
+      _gameMode = 'single';
+    
     }
 
     const multiPlayerGame = () => {
       gameBoard.clearBoard();
       currentPlayer = player1;
       player2 = playerFactory('O', 'player2');
-
+      _gameMode = 'multi';
     }
 
     const switchCurrentPlayer = () => {
@@ -125,13 +133,24 @@ const gameModule = (() => {
         switchCurrentPlayer();
         winLogic.checkWinner(index);
       }
+      if (currentPlayer.getName() === 'AI') {
+        let randomSquareIndex = pickRandomSquare();
+        setTimeout(()=>{
+          gameBoard.setSquare(randomSquareIndex, currentPlayer);
+          winLogic.checkWinner(randomSquareIndex);
+          switchCurrentPlayer();
+        }, 500);
+        
+      }
     }
 
     return {
       singlePlayerGame,
       multiPlayerGame,
       clickSquare,
-      resetPlayers
+      resetPlayers,
+      getMode,
+      getPlayer
     }
 
   })();
@@ -142,6 +161,8 @@ const gameModule = (() => {
   const winLogic = (() => {
     let _currentRound = 1;
     const resetRound = () => _currentRound = 1;
+    const getRound = () => _currentRound;
+    const setRound = (num) => _currentRound = num;
 
     /**
      * The "database" of key value pairs that holds game state information
@@ -252,6 +273,8 @@ const gameModule = (() => {
 
     return {
       resetRound,
+      getRound,
+      setRound,
       checkWinner,
       checkCondition,
       winConditions
@@ -304,8 +327,8 @@ const gameModule = (() => {
 
     _htmlSquares.forEach((element, index) => {
       element.addEventListener('click', () => {
+        if (gameLogic.getMode() === 'single' && gameLogic.getPlayer().getName() === 'AI') return
         gameLogic.clickSquare(element, index);
-
       });
     });
 
